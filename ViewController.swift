@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         academyTableView.dataSource = self
+        academyTableView.delegate = self
         academyTableView.register(
             UINib(nibName: "AcademyTableViewCell", bundle: nil),
             forCellReuseIdentifier: "AcademyCell"
@@ -20,7 +21,13 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
-
+    @IBAction func goToWebsite(_ sender: Any) {
+        let urlTelkomsel = "https://www.telkomsel.com"
+        if let url = URL(string: urlTelkomsel), UIApplication.shared.canOpenURL(url){
+            UIApplication.shared.open(url)
+        }
+    }
+    
 }
 
 extension ViewController: UITableViewDataSource{
@@ -40,4 +47,21 @@ extension ViewController: UITableViewDataSource{
             return UITableViewCell() // Mengembalikan UITableViewCell jika tidak ditemukan.
         }
     }
+}
+
+extension ViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "moveToDetail", sender: dummyAcademyData[indexPath.row])
+    }
+    
+    override func prepare(
+        for segue: UIStoryboardSegue,
+        sender: Any?
+      ) {
+        if segue.identifier == "moveToDetail" {
+          if let detaiViewController = segue.destination as? DetailViewController {
+            detaiViewController.academy = sender as? AcademyModel
+          }
+        }
+      }
 }
